@@ -15,9 +15,10 @@ if (
 }
 
 const server = http.createServer(app);
-const { broadcastMatchCreated } = attachWebSocketServer(server);
+const { broadcastMatchCreated, broadcastCommentaryCreated } = attachWebSocketServer(server);
 
 app.locals.broadcastMatchCreated = broadcastMatchCreated;
+app.locals.broadcastCommentaryCreated = broadcastCommentaryCreated;
 
 server.on("error", (error) => {
   if (error.code === "EADDRINUSE") {
