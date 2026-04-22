@@ -2,16 +2,29 @@
 import {WebSocket, WebSocketServer} from "ws";
 
 const sendJson = (socket, payload) => {
-    if (socket.readyState != WebSocket.OPEN) return;
+    if (socket.readyState !== WebSocket.OPEN) return;
 
-    socket.send(JSON.stringify(payload));
+    try {
+        socket.send(JSON.stringify(payload));
+    } catch (error) {
+        console.error("Failed to serialize WebSocket payload:", error);
+    }
 }
 
 const broadcast = (wss, payload) => {
-    for (const client of wss.clients) {
-        if (client.readyState != WebSocket.OPEN) continue;
+    let message;
 
-        client.send(JSON.stringify(payload));
+    try {
+        message = JSON.stringify(payload);
+    } catch (error) {
+        console.error("Failed to serialize WebSocket broadcast payload:", error);
+        return;
+    }
+
+    for (const client of wss.clients) {
+        if (client.readyState !== WebSocket.OPEN) continue;
+
+        client.send(message);
     }
 }
 

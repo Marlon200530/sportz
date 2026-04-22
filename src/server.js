@@ -2,11 +2,15 @@ import * as http from "node:http";
 import app from "./app.js";
 import { attachWebSocketServer } from "./ws/server.js";
 
-const PORT = process.env.PORT === undefined ? 3000 : Number(process.env.PORT);
+const rawPort = process.env.PORT;
+const PORT = rawPort === undefined ? 3000 : Number(rawPort);
 const HOST = process.env.HOST || "0.0.0.0";
 
-if (Number.isNaN(PORT)) {
-  console.error(`Invalid PORT value: ${process.env.PORT}`);
+if (
+  rawPort !== undefined &&
+  (rawPort.trim() === "" || !Number.isInteger(PORT) || PORT < 0 || PORT > 65535)
+) {
+  console.error(`Invalid PORT value: ${rawPort}. Expected an integer from 0 to 65535.`);
   process.exit(1);
 }
 
