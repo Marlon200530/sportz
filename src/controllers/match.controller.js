@@ -1,5 +1,5 @@
-import {createMatchSchema, listMatchesQuerySchema} from "../validation/matches.js";
-import {createMatchService, getMatchesService }from "../services/match.service.js";
+import {createMatchSchema, listMatchesQuerySchema, matchIdParamSchema} from "../validation/matches.js";
+import {createMatchService, getMatchByIdService, getMatchesService }from "../services/match.service.js";
 import { AppError } from "../utils/errors.js";
 
 
@@ -39,6 +39,29 @@ export const getMatches = async (req, res, next) => {
         res.status(200).json({
             success: true,
             data: matchList
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getMatchById = async (req, res, next) => {
+    try {
+        const parsed = matchIdParamSchema.safeParse(req.params);
+
+        if (!parsed.success) {
+            throw new AppError("Invalid match id", 400, "VALIDATION_ERROR", parsed.error.flatten());
+        }
+
+        const match = await getMatchByIdService(parsed.data.id);
+
+        if (!match) {
+            throw new AppError("Match not found", 404, "MATCH_NOT_FOUND");
+        }
+
+        res.status(200).json({
+            success: true,
+            data: match
         });
     } catch (error) {
         next(error);

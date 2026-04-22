@@ -1,6 +1,7 @@
 import express from "express";
 import * as dotenv from "dotenv";
 import matchRoutes from "./routes/match.routes.js";
+import commentaryRoutes from "./routes/commentary.routes.js";
 import { errorHandler } from "./utils/errors.js";
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 
 const prefix = process.env.PREFIXAPI || "api";
 app.use(`/${prefix}/matches`, matchRoutes);
+app.use(`/${prefix}/matches/:id/commentary`, commentaryRoutes);
 
 
 app.use(errorHandler);
