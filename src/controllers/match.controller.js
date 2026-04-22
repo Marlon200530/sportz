@@ -13,6 +13,8 @@ export const createMatch = async (req, res, next) => {
 
         const match = await createMatchService(parsed.data);
 
+        req.app.locals.broadcastMatchCreated?.(match);
+
         res.status(201).json({
             success: true,
             message: "Match created successfully",
