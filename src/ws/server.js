@@ -141,6 +141,54 @@ const broadcastToMatchSubscribers = (wss, matchId, payload) => {
 }
 
 export const attachWebSocketServer = (server) => {
+    // Handle upgrade events to provide detailed JSON error responses
+    server.on("upgrade", (req, socket, head) => {
+        if (req.url !== "/ws") return;
+
+        protectWithArcjet(req)
+            .then((result) => {
+                if (result.allowed) return;
+
+                // Connection denied - send detailed JSON response
+                const body = JSON.stringify({
+                    success: false,
+                    error: result.error,
+                    code: result.code,
+                });
+
+                socket.write(
+                    `HTTP/1.1 ${result.statusCode} ${result.error}\r\n` +
+                    `Content-Type: application/json\r\n` +
+                    `Content-Length: ${Buffer.byteLength(body)}\r\n` +
+                    `Connection: close\r\n` +
+                    `\r\n` +
+                    body
+                );
+                socket.destroy();
+            })
+            .catch((error) => {
+                console.error("Arcjet WebSocket protection failed:", error);
+                if (shouldFailOpenArcjet()) return;
+
+                // Error during protection check - send error response
+                const body = JSON.stringify({
+                    success: false,
+                    error: "Security protection unavailable",
+                    code: "SECURITY_UNAVAILABLE",
+                });
+
+                socket.write(
+                    `HTTP/1.1 503 Service Unavailable\r\n` +
+                    `Content-Type: application/json\r\n` +
+                    `Content-Length: ${Buffer.byteLength(body)}\r\n` +
+                    `Connection: close\r\n` +
+                    `\r\n` +
+                    body
+                );
+                socket.destroy();
+            });
+    });
+
     const wss = new WebSocketServer({
         server,
         path: "/ws",
@@ -153,9 +201,7 @@ export const attachWebSocketServer = (server) => {
                         return;
                     }
 
-                    done(false, result.statusCode, result.error, {
-                        "Content-Type": "application/json"
-                    });
+                    done(false, result.statusCode, result.error);
                 })
                 .catch((error) => {
                     console.error("Arcjet WebSocket protection failed:", error);
@@ -164,9 +210,7 @@ export const attachWebSocketServer = (server) => {
                         return;
                     }
 
-                    done(false, 503, "Security protection unavailable", {
-                        "Content-Type": "application/json"
-                    });
+                    done(false, 503, "Security protection unavailable");
                 });
         }
     })

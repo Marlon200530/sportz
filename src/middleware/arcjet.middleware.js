@@ -44,9 +44,20 @@ const getDeniedResponse = (decision) => {
 export const protectWithArcjet = async (request, requested = ARCJET_REQUESTED_TOKENS) => {
   if (!aj) {
     if (!missingKeyWarningLogged) {
-      console.warn("ARCJET_KEY is not configured. Arcjet protection is disabled.");
+      console.error("ARCJET_KEY is not configured. Arcjet protection is disabled.");
       missingKeyWarningLogged = true;
     }
+
+    // Fail closed in production when Arcjet key is missing
+    if (process.env.NODE_ENV === "production" || ARCJET_MODE === "LIVE") {
+      return {
+        allowed: false,
+        statusCode: 503,
+        code: "SECURITY_UNAVAILABLE",
+        error: "Security protection unavailable",
+      };
+    }
+
     return { allowed: true };
   }
 
