@@ -3,8 +3,14 @@ import { MATCH_STATUS } from '../validation/matches.js';
 export function getMatchStatus(startTime, endTime, now = new Date()) {
     const start = new Date(startTime);
     const end = new Date(endTime);
+    const startTimestamp = start.getTime();
+    const endTimestamp = end.getTime();
 
-    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    if (Number.isNaN(startTimestamp) || Number.isNaN(endTimestamp)) {
+        return null;
+    }
+
+    if (endTimestamp < startTimestamp) {
         return null;
     }
 
