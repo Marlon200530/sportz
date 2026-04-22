@@ -1,4 +1,4 @@
-import {createMatch, getMatches } from "../repositories/match.repository.js";
+import {createMatch, getMatchById, getMatches } from "../repositories/match.repository.js";
 import { getMatchStatus } from "../utils/match-status.js";
 import { AppError } from "../utils/errors.js";
 
@@ -33,5 +33,9 @@ export const createMatchService = async (data) => {
 }
 
 export const getMatchesService = async (limit) => {
-    return await getMatches(limit ?? 20);
+    return await getMatches(limit ?? 100);
+}
+
+export const getMatchByIdService = async (id) => {
+    return await getMatchById(id);
 }

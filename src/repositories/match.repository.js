@@ -1,6 +1,6 @@
 import {db} from "../db/index.js";
 import {matches} from "../db/schema.js";
-import {desc} from "drizzle-orm";
+import {desc, eq} from "drizzle-orm";
 
 
 export const createMatch = async (data) => {
@@ -23,4 +23,14 @@ export const getMatches = async (limit) => {
         .orderBy(desc(matches.createdAt))
         .limit(limit);
     return data;
+};
+
+export const getMatchById = async (id) => {
+    const [match] = await db
+        .select()
+        .from(matches)
+        .where(eq(matches.id, id))
+        .limit(1);
+
+    return match;
 };
