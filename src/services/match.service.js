@@ -4,7 +4,10 @@ import { AppError } from "../utils/errors.js";
 
 
 export const createMatchService = async (data) => {
-    if (data.homeTeam.toLowerCase() === data.awayTeam.toLowerCase()) {
+    const homeTeam = data.homeTeam.trim();
+    const awayTeam = data.awayTeam.trim();
+
+    if (homeTeam.toLowerCase() === awayTeam.toLowerCase()) {
         throw new AppError(
             "homeTeam and awayTeam must be different",
             422,
@@ -20,6 +23,9 @@ export const createMatchService = async (data) => {
 
     const match = await createMatch({
         ...data,
+        sport: data.sport.trim(),
+        homeTeam,
+        awayTeam,
         status,
     });
 

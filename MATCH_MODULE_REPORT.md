@@ -14,7 +14,7 @@ Analise e correcao do fluxo de criacao de partidas em:
 
 ## Problemas encontrados
 
-1. A rota `POST /matches` nao estava registrada.
+1. A rota `POST /api/v1/matches` nao estava registrada.
    - O controller de criacao existia, mas nao era chamado por nenhuma rota.
 
 2. A resposta de erro tinha typo.
@@ -40,7 +40,7 @@ Analise e correcao do fluxo de criacao de partidas em:
 ## Correcoes aplicadas
 
 1. Registrada a rota de criacao:
-   - `POST /api/matches`
+   - `POST /api/v1/matches`
    - Implementada em `src/routes/match.routes.js`.
 
 2. Criado utilitario de erros:
@@ -106,10 +106,9 @@ Resposta de erro inesperado:
    - `endTime` antes de `startTime`.
 
 2. Adicionar endpoints faltantes:
-   - `GET /api/matches`
-   - `GET /api/matches/:id`
-   - `PATCH /api/matches/:id/score`
-   - `PATCH /api/matches/:id/status`
+   - `GET /api/v1/matches/:id`
+   - `PATCH /api/v1/matches/:id/score`
+   - `PATCH /api/v1/matches/:id/status`
 
 3. Mapear erros especificos do banco:
    - Falha de conexao.
