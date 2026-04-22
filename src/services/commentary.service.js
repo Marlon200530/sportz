@@ -13,9 +13,15 @@ const parseTags = (tags) => {
 
   try {
     const parsedTags = JSON.parse(tags);
-    return Array.isArray(parsedTags) ? parsedTags : [];
+    if (!Array.isArray(parsedTags)) return [];
+    return parsedTags
+      .map((item) => String(item).trim())
+      .filter((item) => item !== "");
   } catch {
-    return tags.split(",").filter(Boolean);
+    return tags
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item !== "");
   }
 };
 
