@@ -23,6 +23,12 @@ export const createMatchCommentary = async (req, res, next) => {
 
     const createdCommentary = await createCommentaryService(parsedParams.data.id, parsedBody.data);
 
+    try {
+      req.app.locals.broadcastCommentaryCreated?.(createdCommentary);
+    } catch (error) {
+      console.error("Failed to broadcast commentary:", error);
+    }
+
     res.status(201).json({
       success: true,
       message: "Commentary created successfully",
