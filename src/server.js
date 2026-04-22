@@ -5,7 +5,7 @@ import { attachWebSocketServer } from "./ws/server.js";
 const PORT = process.env.PORT === undefined ? 3000 : Number(process.env.PORT);
 const HOST = process.env.HOST || "0.0.0.0";
 
-if (Number.isNaN(PORT)) {
+if (Number.isNaN(PORT) || !Number.isInteger(PORT) || PORT < 0 || PORT > 65535) {
   console.error(`Invalid PORT value: ${process.env.PORT}`);
   process.exit(1);
 }
