@@ -287,4 +287,4 @@ Funcionalidades implementadas:
 
 ## Licenca
 
-ISC
+MIT
